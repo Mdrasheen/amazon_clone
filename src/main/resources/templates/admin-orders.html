@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Orders - Admin</title>
+</head>
+<body>
+
+<h2>All Orders</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Order ID</th>
+        <th>User Email</th>
+        <th>Order Date</th>
+        <th>Total Amount</th>
+        <th> Action</th>
+        <th>Status</th>
+
+    </tr>
+
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.userEmail}"></td>
+        <td th:text="${order.orderDate}"></td>
+        <td th:text="${order.totalAmount}"></td>
+        <td th:text="${order.status}"></td>
+        
+        <td>
+        <a th:href="@{/admin/orders/{id}(id=${order.id})}">
+            View
+        </a>
+    </td>
+
+    <td>
+    <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post">
+        <select name="status">
+            <option th:selected="${order.status == 'PLACED'}">PLACED</option>
+            <option th:selected="${order.status == 'SHIPPED'}">SHIPPED</option>
+            <option th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
+        </select>
+        <button type="submit">Update</button>
+    </form>
+</td>
+
+    </tr>
+</table>
+
+<br>
+<a href="/home">Back to Home</a>
+
+</body>
+</html>

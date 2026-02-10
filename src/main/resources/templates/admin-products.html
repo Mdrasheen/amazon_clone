@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin - Products</title>
+</head>
+<body>
+
+<h2>Admin - Product Management</h2>
+
+<a href="/admin/products/new">➕ Add New Product</a>
+<br><br>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Image URL</th>
+        <th>Actions</th>
+    </tr>
+
+    <tr th:each="product : ${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.imageUrl}"></td>
+        <td>
+            <a th:href="@{/admin/products/edit/{id}(id=${product.id})}">Edit</a>
+            |
+            <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
+               onclick="return confirm('Delete this product?')">Delete</a>
+        </td>
+    </tr>
+</table>
+
+<br>
+<a href="/home">⬅ Back to Home</a>
+
+</body>
+</html>

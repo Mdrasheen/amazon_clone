@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Orders</title>
+</head>
+<body>
+
+<h1>My Orders</h1>
+
+<a th:href="@{/products}">← Back to Products</a>
+<hr>
+
+<div th:if="${orders.isEmpty()}">
+    <p>No orders found.</p>
+</div>
+
+<div th:each="order : ${orders}" style="border:1px solid #ccc; padding:15px; margin-bottom:20px;">
+
+    <h3>
+        Order ID: <span th:text="${order.id}"></span>
+    </h3>
+
+    <p>
+        Order Date:
+        <span th:text="${order.orderDate}"></span>
+    </p>
+
+    <p>
+        Total Amount:
+        ₹<span th:text="${order.totalAmount}"></span>
+    </p>
+
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Status</th>
+        </tr>
+
+        <tr th:each="item : ${order.orderItems}">
+            <td th:text="${item.productName}"></td>
+            <td>₹<span th:text="${item.price}"></span></td>
+            <td th:text="${item.quantity}"></td>
+            <td th:text="${order.status}"></td>
+        </tr>
+    </table>
+
+    <table border="1" cellpadding="10">
+    <tr>
+        <th>Order ID</th>
+        <th>Date</th>
+        <th>Total Amount</th>
+        <th>Status</th>
+    </tr>
+
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.orderDate}"></td>
+        <td th:text="${order.totalAmount}"></td>
+        <td th:text="${order.status}"></td>
+    </tr>
+</table>
+</div>
+
+</body>
+</html>

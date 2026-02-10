@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Your Cart</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<h1>Your Cart</h1>
+
+<a th:href="@{/products}">← Continue Shopping</a>
+<hr>
+
+<table border="1" cellpadding="10" cellspacing="0">
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="item : ${cart}">
+        <td th:text="${item.product.name}"></td>
+
+        <td>
+            ₹<span th:text="${item.product.price}"></span>
+        </td>
+
+        <td>
+            <a th:href="@{/cart/decrease/{id}(id=${item.product.id})}">
+                <button>-</button>
+            </a>
+
+            <span th:text="${item.quantity}"></span>
+
+            <a th:href="@{/cart/increase/{id}(id=${item.product.id})}">
+                <button>+</button>
+            </a>
+        </td>
+
+        <td>
+            ₹<span th:text="${item.product.price * item.quantity}"></span>
+        </td>
+
+        <td>
+            <a th:href="@{/cart/remove/{id}(id=${item.product.id})}">
+                <button>Remove</button>
+            </a>
+        </td>
+    </tr>
+</table>
+
+<br>
+
+<a th:href="@{/checkout}">
+    <button>Proceed to Checkout</button>
+</a>
+
+</body>
+</html>

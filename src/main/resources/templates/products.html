@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Products</title>
+</head>
+<body>
+
+<h1>Products</h1>
+
+<a th:href="@{/logout}">Logout</a>
+<hr>
+
+<div style="display: flex; gap: 20px; flex-wrap: wrap;">
+
+    <div th:each="product : ${products}"
+         style="border:1px solid #ccc; padding:10px; width:200px;">
+
+        <a th:href="@{/products/{id}(id=${product.id})}">
+            <img th:src="${product.imageUrl}" width="150" height="150" />
+        </a>
+
+        <h3 th:text="${product.name}"></h3>
+        <strong>₹<span th:text="${product.price}"></span></strong>
+
+    </div>
+
+</div>
+
+</body>
+</html>

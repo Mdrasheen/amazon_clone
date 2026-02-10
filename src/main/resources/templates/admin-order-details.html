@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Details</title>
+</head>
+<body>
+
+<h2>Order Details</h2>
+
+<p><b>Order ID:</b> <span th:text="${order.id}"></span></p>
+<p><b>User Email:</b> <span th:text="${order.userEmail}"></span></p>
+<p><b>Order Date:</b> <span th:text="${order.orderDate}"></span></p>
+<p><b>Status:</b> <span th:text="${order.status}"></span></p>
+<p><b>Total Amount:</b> ₹<span th:text="${order.totalAmount}"></span></p>
+
+<hr>
+
+
+<h3>Update Order Status</h3>
+
+<form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post">
+    <select name="status">
+        <option value="PLACED" th:selected="${order.status == 'PLACED'}">PLACED</option>
+        <option value="SHIPPED" th:selected="${order.status == 'SHIPPED'}">SHIPPED</option>
+        <option value="DELIVERED" th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
+        <option value="CANCELLED" th:selected="${order.status == 'CANCELLED'}">CANCELLED</option>
+    </select>
+
+    <button type="submit">Update</button>
+</form>
+<hr>
+<h3>Items</h3>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+    </tr>
+
+    <tr th:each="item : ${order.orderItems}">
+        <td th:text="${item.productName}"></td>
+        <td th:text="${item.price}"></td>
+        <td th:text="${item.quantity}"></td>
+    </tr>
+</table>
+
+<br>
+<a href="/admin/orders">⬅ Back to Orders</a>
+
+</body>
+</html>
