@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>All Orders - Admin</title>
+    <title>Admin - Orders</title>
 </head>
 <body>
 
@@ -13,44 +13,63 @@
         <th>User Email</th>
         <th>Order Date</th>
         <th>Total Amount</th>
-        <th> Action</th>
         <th>Status</th>
-
+        <th>View</th>
+        <th>Update Status</th>
     </tr>
 
     <tr th:each="order : ${orders}">
         <td th:text="${order.id}"></td>
         <td th:text="${order.userEmail}"></td>
         <td th:text="${order.orderDate}"></td>
-        <td th:text="${order.totalAmount}"></td>
+        <td>₹<span th:text="${order.totalAmount}"></span></td>
         <td th:text="${order.status}"></td>
-        
+
+        <!-- View order details -->
         <td>
-        <a th:href="@{/admin/orders/{id}(id=${order.id})}">
-            View
-        </a>
-    </td>
+            <a th:href="@{/admin/orders/{id}(id=${order.id})}">View</a>
+        </td>
 
-    <td>
-    <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post">
-        <select name="status">
-            <option th:selected="${order.status == 'PLACED'}">PLACED</option>
-            <option th:selected="${order.status == 'SHIPPED'}">SHIPPED</option>
-            <option th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
-        </select>
-        <button type="submit">Update</button>
+        <!-- Update order status -->
+        <td>
+            <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post">
 
-        <input type="hidden"
-           th:name="${_csrf.parameterName}"
-           th:value="${_csrf.token}" />
-    </form>
-</td>
+                <select name="status">
+                    <option value="PLACED"
+                        th:selected="${order.status == 'PLACED'}">
+                        PLACED
+                    </option>
 
+                    <option value="SHIPPED"
+                        th:selected="${order.status == 'SHIPPED'}">
+                        SHIPPED
+                    </option>
+
+                    <option value="DELIVERED"
+                        th:selected="${order.status == 'DELIVERED'}">
+                        DELIVERED
+                    </option>
+
+                    <option value="CANCELLED"
+                        th:selected="${order.status == 'CANCELLED'}">
+                        CANCELLED
+                    </option>
+                </select>
+
+                <button type="submit">Update</button>
+
+                <!-- CSRF -->
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}" />
+            </form>
+        </td>
     </tr>
 </table>
 
 <br>
-<a href="/home">Back to Home</a>
+
+<a th:href="@{/home}">← Back to Home</a>
 
 </body>
 </html>

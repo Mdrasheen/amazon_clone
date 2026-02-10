@@ -17,7 +17,8 @@ public class Order {
     private double totalAmount;
 
     private LocalDateTime orderDate;
-    
+    private String paymentMethod;   // COD / UPI / NET_BANKING
+    private String paymentStatus;   // PENDING / PAID
 
     @Column(nullable = false)
     private String status;   // ✅ ADD THIS
@@ -63,6 +64,22 @@ public class Order {
     public void setStatus(String status) {
         this.status = status;
     }
+    public String getPaymentMethod() {
+    return paymentMethod;
+}
+
+public void setPaymentMethod(String paymentMethod) {
+    this.paymentMethod = paymentMethod;
+}
+
+public String getPaymentStatus() {
+    return paymentStatus;
+}
+
+public void setPaymentStatus(String paymentStatus) {
+    this.paymentStatus = paymentStatus;
+}
+
 
     public List<OrderItem> getOrderItems() {
         return orderItems;

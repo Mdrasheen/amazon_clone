@@ -1,13 +1,15 @@
 package com.example.demo.controller;
 
+import java.security.Principal;
 import java.util.List;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.entity.Order;
 import com.example.demo.model.CartItem;
 import com.example.demo.service.OrderService;
 
@@ -22,19 +24,21 @@ public class CheckoutController {
         this.orderService = orderService;
     }
 
+    // SHOW CHECKOUT PAGE
     @GetMapping("/checkout")
-    public String checkout(HttpSession session, Model model) {
+    public String showCheckout(HttpSession session, Model model) {
 
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        @SuppressWarnings("unchecked")
+        List<CartItem> cart =
+                (List<CartItem>) session.getAttribute("cart");
 
         if (cart == null || cart.isEmpty()) {
-            return "redirect:/products";
+            return "redirect:/cart";
         }
 
-        double total = 0;
-        for (CartItem item : cart) {
-            total += item.getProduct().getPrice() * item.getQuantity();
-        }
+        double total = cart.stream()
+                .mapToDouble(i -> i.getProduct().getPrice() * i.getQuantity())
+                .sum();
 
         model.addAttribute("cart", cart);
         model.addAttribute("total", total);
@@ -42,23 +46,44 @@ public class CheckoutController {
         return "checkout";
     }
 
-    @PostMapping("/place-order")
-    public String placeOrder(HttpSession session, Authentication authentication, Model model) {
+    // PLACE ORDER
+    @PostMapping("/checkout")
+    public String placeOrder(
+            @RequestParam String paymentMethod,
+            Principal principal,
+            HttpSession session
+    ) {
+        String userEmail = principal.getName();
 
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        @SuppressWarnings("unchecked")
+        List<CartItem> cartItems =
+                (List<CartItem>) session.getAttribute("cart");
 
-        if (cart == null || cart.isEmpty()) {
-            return "redirect:/products";
+        if (cartItems == null || cartItems.isEmpty()) {
+            return "redirect:/cart";
         }
 
-        String userEmail = authentication.getName();
+        Order order = orderService.placeOrder(
+                userEmail,
+                cartItems,
+                paymentMethod
+        );
 
-        orderService.placeOrder(userEmail, cart);
+        // store last order for success page
+        session.setAttribute("lastOrder", order);
 
+        // clear cart
         session.removeAttribute("cart");
 
-        model.addAttribute("message", "Order placed successfully!");
+        return "redirect:/order-success";
+    }
 
+    // ORDER SUCCESS PAGE
+    @GetMapping("/order-success")
+    public String orderSuccess(HttpSession session, Model model) {
+        Order order = (Order) session.getAttribute("lastOrder");
+        model.addAttribute("order", order);
+        session.removeAttribute("lastOrder");
         return "order-success";
     }
 }

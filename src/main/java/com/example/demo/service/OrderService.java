@@ -22,7 +22,11 @@ public class OrderService {
 
     // ================= USER ORDER =================
 
-    public Order placeOrder(String userEmail, List<CartItem> cartItems) {
+    public Order placeOrder(
+            String userEmail,
+            List<CartItem> cartItems,
+            String paymentMethod
+    ) {
 
         double totalAmount = 0;
         for (CartItem item : cartItems) {
@@ -34,6 +38,14 @@ public class OrderService {
         order.setTotalAmount(totalAmount);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus("PLACED");
+        order.setPaymentMethod(paymentMethod);
+
+        // Payment status logic
+        if ("COD".equals(paymentMethod)) {
+            order.setPaymentStatus("PENDING");
+        } else {
+            order.setPaymentStatus("PAID"); // mock success
+        }
 
         List<OrderItem> orderItems = new ArrayList<>();
 
@@ -48,34 +60,34 @@ public class OrderService {
         }
 
         order.setOrderItems(orderItems);
-        return orderRepository.save(order);
 
+        return orderRepository.save(order);
+    }
+
+    // ================= USER VIEW =================
+
+    public List<Order> getOrdersByUser(String userEmail) {
+        return orderRepository.findByUserEmailOrderByOrderDateDesc(userEmail);
     }
 
     // ================= ADMIN =================
 
-    // ✔ get all orders
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    // ✔ get single order
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
 
-    // ✔ update status
     public void updateOrderStatus(Long orderId, String status) {
-    Order order = orderRepository.findById(orderId)
-            .orElseThrow(() -> new RuntimeException("Order not found"));
+        Order order = getOrderById(orderId);
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
 
-    order.setStatus(status);
-    orderRepository.save(order);
-}
-
-    public List<Order> getOrdersByUser(String userEmail) {
-    return orderRepository.findByUserEmailOrderByOrderDateDesc(userEmail);
-}
-
+    public void save(Order order) {
+        orderRepository.save(order);
+    }
 }
