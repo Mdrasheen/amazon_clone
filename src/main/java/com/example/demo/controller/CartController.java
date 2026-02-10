@@ -1,43 +1,58 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.Product;
 import com.example.demo.model.CartItem;
-import com.example.demo.service.ProductService;
+import com.example.demo.entity.Product;
+import com.example.demo.repository.ProductRepository;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@RequestMapping("/cart")
 public class CartController {
 
-    private final ProductService productService;
+    private final ProductRepository productRepository;
 
-    public CartController(ProductService productService) {
-        this.productService = productService;
+    public CartController(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
-    @GetMapping("/add-to-cart/{id}")
-    public String addToCart(@PathVariable Long id, HttpSession session) {
+    // ================= VIEW CART =================
+    @GetMapping
+    public String viewCart(HttpSession session, Model model) {
 
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        List<CartItem> cart = getCart(session);
 
-        if (cart == null) {
-            cart = new ArrayList<>();
-        }
+        double total = cart.stream()
+                .mapToDouble(i -> i.getProduct().getPrice() * i.getQuantity())
+                .sum();
 
-        Product product = productService.getProductById(id);
+        model.addAttribute("cart", cart);
+        model.addAttribute("total", total);
+
+        return "cart";
+    }
+
+    // ================= ADD TO CART =================
+    @PostMapping("/add")
+    public String addToCart(
+            @RequestParam Long productId,
+            HttpSession session
+    ) {
+        List<CartItem> cart = getCart(session);
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
         for (CartItem item : cart) {
-            if (item.getProduct().getId().equals(id)) {
-                item.increaseQuantity();
+            if (item.getProduct().getId().equals(productId)) {
+                item.setQuantity(item.getQuantity() + 1);
                 session.setAttribute("cart", cart);
                 return "redirect:/cart";
             }
@@ -49,72 +64,26 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @GetMapping("/cart")
-    public String viewCart(HttpSession session, Model model) {
+    // ================= REMOVE FROM CART =================
+    @GetMapping("/remove/{productId}")
+    public String removeFromCart(
+            @PathVariable Long productId,
+            HttpSession session
+    ) {
+        List<CartItem> cart = getCart(session);
+        cart.removeIf(item -> item.getProduct().getId().equals(productId));
+        session.setAttribute("cart", cart);
+        return "redirect:/cart";
+    }
 
+    // ================= HELPER =================
+    @SuppressWarnings("unchecked")
+    private List<CartItem> getCart(HttpSession session) {
         List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-
         if (cart == null) {
             cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
         }
-
-        model.addAttribute("cart", cart);
-        return "cart";
-    }
-
-    // ➕ Increase quantity
-    @GetMapping("/cart/increase/{id}")
-    public String increaseQuantity(@PathVariable Long id, HttpSession session) {
-
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-
-        if (cart != null) {
-            for (CartItem item : cart) {
-                if (item.getProduct().getId().equals(id)) {
-                    item.increaseQuantity();
-                    break;
-                }
-            }
-        }
-
-        return "redirect:/cart";
-    }
-
-    // ➖ Decrease quantity
-    @GetMapping("/cart/decrease/{id}")
-    public String decreaseQuantity(@PathVariable Long id, HttpSession session) {
-
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-
-        if (cart != null) {
-            for (CartItem item : cart) {
-                if (item.getProduct().getId().equals(id)) {
-                    item.decreaseQuantity();
-                    break;
-                }
-            }
-        }
-
-        return "redirect:/cart";
-    }
-
-    // ❌ Remove item
-    @GetMapping("/cart/remove/{id}")
-    public String removeItem(@PathVariable Long id, HttpSession session) {
-
-        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
-
-        if (cart != null) {
-            Iterator<CartItem> iterator = cart.iterator();
-            while (iterator.hasNext()) {
-                CartItem item = iterator.next();
-                if (item.getProduct().getId().equals(id)) {
-                    iterator.remove();
-                    break;
-                }
-            }
-        }
-
-        return "redirect:/cart";
+        return cart;
     }
 }

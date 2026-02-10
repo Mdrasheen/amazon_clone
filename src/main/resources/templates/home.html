@@ -3,42 +3,80 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-    <title>Home</title>
+    <title>Home | Amazon Clone</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-<h1>Welcome to Amazon 🛒</h1>
+<!-- ================= NAVBAR ================= -->
+<div class="navbar">
+    <h2>Amazon Clone</h2>
 
-<!-- Common -->
-<a th:href="@{/products}">View Products</a>
-<br><br>
+    <div>
+        <a th:href="@{/products}">Products</a>
 
-<!-- USER only -->
-<div sec:authorize="hasRole('USER')">
-    <a th:href="@{/my-orders}">My Orders</a>
-    <br><br>
+        <span sec:authorize="hasRole('USER')">
+            <a th:href="@{/my-orders}">My Orders</a>
+        </span>
+
+        <span sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/orders}">Admin Panel</a>
+        </span>
+
+        <span sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button class="btn btn-danger">Logout</button>
+            </form>
+        </span>
+
+        <span sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}">Login</a>
+        </span>
+    </div>
 </div>
 
-<!-- ADMIN only -->
-<div sec:authorize="hasRole('ADMIN')">
-    <a th:href="@{/admin/products}">Admin Panel</a>
-    <br><br>
+<!-- ================= CONTENT ================= -->
+<div class="container">
+
+    <div class="card">
+        <h1>Welcome to Amazon Clone 🛒</h1>
+        <p style="margin-top:10px;">
+            Shop smart. Order fast. Experience secure checkout.
+        </p>
+
+        <br>
+
+        <a th:href="@{/products}" class="btn btn-primary">
+            Start Shopping
+        </a>
+    </div>
+
+    <!-- USER INFO -->
+    <div class="card" sec:authorize="hasRole('USER')">
+        <h2>User Dashboard</h2>
+        <p>Track your orders and manage purchases.</p>
+
+        <a th:href="@{/my-orders}" class="btn btn-primary">
+            View My Orders
+        </a>
+    </div>
+
+    <!-- ADMIN INFO -->
+    <div class="card" sec:authorize="hasRole('ADMIN')">
+        <h2>Admin Dashboard</h2>
+        <p>Manage products and customer orders.</p>
+
+        <a th:href="@{/admin/orders}" class="btn btn-primary">
+            Manage Orders
+        </a>
+    </div>
+
 </div>
 
-<!-- Authenticated users -->
-<div sec:authorize="isAuthenticated()">
-    <form th:action="@{/logout}" method="post">
-        <input type="hidden"
-               th:name="${_csrf.parameterName}"
-               th:value="${_csrf.token}" />
-        <button type="submit">Logout</button>
-    </form>
-</div>
-
-<!-- Guest users -->
-<div sec:authorize="!isAuthenticated()">
-    <a th:href="@{/login}">Login</a>
+<!-- ================= FOOTER ================= -->
+<div class="footer">
+    © 2026 Amazon Clone | Built with Spring Boot & Thymeleaf
 </div>
 
 </body>

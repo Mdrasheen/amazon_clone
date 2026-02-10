@@ -29,4 +29,9 @@ public class CartItem {
             this.quantity--;
         }
     }
+
+    public void setQuantity(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setQuantity'");
+    }
 }

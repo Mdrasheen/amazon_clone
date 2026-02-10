@@ -1,115 +1,41 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>My Orders</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f5f5f5;
-        }
-
-        .order-box {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 25px;
-        }
-
-        /* Status badges */
-        .badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .badge-placed {
-            background-color: #f0ad4e; /* orange */
-        }
-
-        .badge-shipped {
-            background-color: #5bc0de; /* blue */
-        }
-
-        .badge-delivered {
-            background-color: #5cb85c; /* green */
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-
 <body>
 
-<h1>My Orders</h1>
+<div class="container">
 
-<a th:href="@{/products}">← Back to Products</a>
-<hr>
+    <h2>My Orders</h2>
 
-<!-- No orders -->
-<div th:if="${orders.isEmpty()}">
-    <p>No orders found.</p>
-</div>
+    <div th:if="${orders.isEmpty()}" class="card">
+        <p>No orders found.</p>
+    </div>
 
-<!-- Orders list -->
-<div th:each="order : ${orders}" class="order-box">
+    <div th:each="order : ${orders}" class="card">
 
-    <h3>
-        Order ID: <span th:text="${order.id}"></span>
-    </h3>
+        <h3>Order #<span th:text="${order.id}"></span></h3>
 
-    <p>
-        Order Date:
-        <span th:text="${order.orderDate}"></span>
-    </p>
+        <p><b>Date:</b> <span th:text="${order.orderDate}"></span></p>
+        <p><b>Total:</b> ₹<span th:text="${order.totalAmount}"></span></p>
 
-    <p>
-        Total Amount:
-        ₹<span th:text="${order.totalAmount}"></span>
-    </p>
+        <p>
+            <b>Status:</b>
+            <span class="badge"
+                  th:classappend="' badge-' + ${order.status}"
+                  th:text="${order.status}">
+            </span>
+        </p>
 
-    <p>
-        Status:
-        <span th:text="${order.status}"
-              th:classappend="
-                ${order.status == 'PLACED'} ? 'badge badge-placed' :
-                (${order.status == 'SHIPPED'} ? 'badge badge-shipped' :
-                (${order.status == 'DELIVERED'} ? 'badge badge-delivered' : 'badge'))
-              ">
-        </span>
-    </p>
+        <p>
+            <b>Payment:</b>
+            <span th:text="${order.paymentMethod}"></span>
+            (<span th:text="${order.paymentStatus}"></span>)
+        </p>
 
-    <h4>Order Items</h4>
-
-    <table>
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-        </tr>
-
-        <tr th:each="item : ${order.orderItems}">
-            <td th:text="${item.productName}"></td>
-            <td>₹<span th:text="${item.price}"></span></td>
-            <td th:text="${item.quantity}"></td>
-        </tr>
-    </table>
+    </div>
 
 </div>
 

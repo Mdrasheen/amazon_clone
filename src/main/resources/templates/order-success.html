@@ -1,49 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Order Successful</title>
+    <title>Order Successful | Amazon Clone</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<h1>🎉 Order Placed Successfully!</h1>
+<!-- ================= NAVBAR ================= -->
+<div class="navbar">
+    <h2>Amazon Clone</h2>
+    <div>
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/products}">Products</a>
+    </div>
+</div>
 
-<p>Thank you for shopping with us.</p>
+<!-- ================= CONTENT ================= -->
+<div class="container">
 
-<hr>
+    <div class="card" style="text-align:center;">
 
-<div th:if="${order != null}">
+        <h1 style="color:#198754;">🎉 Order Placed Successfully!</h1>
 
-    <p>
-        <b>Order ID:</b>
-        <span th:text="${order.id}"></span>
-    </p>
+        <p style="margin-top:10px;">
+            Thank you for shopping with us. Your order has been placed and is being processed.
+        </p>
 
-    <p>
-        <b>Order Status:</b>
-        <span th:text="${order.status}"></span>
-    </p>
+        <hr style="margin:20px 0;">
 
-    <p>
-        <b>Payment Method:</b>
-        <span th:text="${order.paymentMethod}"></span>
-    </p>
+        <div th:if="${order != null}">
 
-    <p>
-        <b>Payment Status:</b>
-        <span th:text="${order.paymentStatus}"></span>
-    </p>
+            <p>
+                <b>Order ID:</b>
+                <span th:text="${order.id}"></span>
+            </p>
+
+            <p>
+                <b>Order Status:</b>
+                <span th:text="${order.status}"></span>
+            </p>
+
+            <p>
+                <b>Payment Method:</b>
+                <span th:text="${order.paymentMethod}"></span>
+            </p>
+
+            <p>
+                <b>Payment Status:</b>
+                <span th:text="${order.paymentStatus}"></span>
+            </p>
+
+        </div>
+
+        <div th:if="${order == null}">
+            <p>Order details are not available.</p>
+        </div>
+
+        <hr style="margin:20px 0;">
+
+        <a th:href="@{/my-orders}" class="btn btn-primary">
+            View My Orders
+        </a>
+
+        <br><br>
+
+        <a th:href="@{/products}" class="btn">
+            Continue Shopping
+        </a>
+
+    </div>
 
 </div>
 
-<div th:if="${order == null}">
-    <p>Order details not available.</p>
+<!-- ================= FOOTER ================= -->
+<div class="footer">
+    © 2026 Amazon Clone | Order Confirmed
 </div>
-
-<hr>
-
-<a th:href="@{/my-orders}">📦 View My Orders</a>
-<br><br>
-<a th:href="@{/products}">🛍 Continue Shopping</a>
 
 </body>
 </html>

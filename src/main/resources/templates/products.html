@@ -2,28 +2,39 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Products</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 
-<h1>Products</h1>
+<div class="navbar">
+    <h2>Amazon Clone</h2>
+    <a th:href="@{/cart}">🛒 Cart</a>
+</div>
 
-<a th:href="@{/logout}">Logout</a>
-<hr>
+<div class="container">
+    <h2>Products</h2>
 
-<div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div class="grid">
+        <div class="card" th:each="product : ${products}">
 
-    <div th:each="product : ${products}"
-         style="border:1px solid #ccc; padding:10px; width:200px;">
+            <h3 th:text="${product.name}"></h3>
+            <p>₹ <span th:text="${product.price}"></span></p>
 
-        <a th:href="@{/products/{id}(id=${product.id})}">
-            <img th:src="${product.imageUrl}" width="150" height="150" />
-        </a>
+            <!-- ✅ ADD TO CART FORM -->
+            <form th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="productId" th:value="${product.id}"/>
 
-        <h3 th:text="${product.name}"></h3>
-        <strong>₹<span th:text="${product.price}"></span></strong>
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}" />
 
+                <button type="submit" class="btn">
+                    Add to Cart
+                </button>
+            </form>
+
+        </div>
     </div>
-
 </div>
 
 </body>
