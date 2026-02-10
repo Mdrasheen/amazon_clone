@@ -1,19 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <title>Home</title>
 </head>
+
 <body>
 
 <h1>Welcome to Amazon 🛒</h1>
+
+<!-- Common -->
 <a th:href="@{/products}">View Products</a>
-<a th:href="@{/logout}">Logout</a>
-<a th:href="@{/my-orders}">My Orders</a>
-<form th:action="@{/logout}" method="post" style="display:inline;">
-    <input type="hidden"
-           th:name="${_csrf.parameterName}"
-           th:value="${_csrf.token}" />
-    <button type="submit">Logout</button>
-</form>
+<br><br>
+
+<!-- USER only -->
+<div sec:authorize="hasRole('USER')">
+    <a th:href="@{/my-orders}">My Orders</a>
+    <br><br>
+</div>
+
+<!-- ADMIN only -->
+<div sec:authorize="hasRole('ADMIN')">
+    <a th:href="@{/admin/products}">Admin Panel</a>
+    <br><br>
+</div>
+
+<!-- Authenticated users -->
+<div sec:authorize="isAuthenticated()">
+    <form th:action="@{/logout}" method="post">
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}" />
+        <button type="submit">Logout</button>
+    </form>
+</div>
+
+<!-- Guest users -->
+<div sec:authorize="!isAuthenticated()">
+    <a th:href="@{/login}">Login</a>
+</div>
+
 </body>
 </html>

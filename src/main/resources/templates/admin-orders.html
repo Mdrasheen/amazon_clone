@@ -39,6 +39,10 @@
             <option th:selected="${order.status == 'DELIVERED'}">DELIVERED</option>
         </select>
         <button type="submit">Update</button>
+
+        <input type="hidden"
+           th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}" />
     </form>
 </td>
 

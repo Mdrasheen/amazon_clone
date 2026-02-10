@@ -1,8 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <title>My Orders</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        .order-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* Status badges */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge-placed {
+            background-color: #f0ad4e; /* orange */
+        }
+
+        .badge-shipped {
+            background-color: #5bc0de; /* blue */
+        }
+
+        .badge-delivered {
+            background-color: #5cb85c; /* green */
+        }
+    </style>
 </head>
+
 <body>
 
 <h1>My Orders</h1>
@@ -10,11 +62,13 @@
 <a th:href="@{/products}">← Back to Products</a>
 <hr>
 
+<!-- No orders -->
 <div th:if="${orders.isEmpty()}">
     <p>No orders found.</p>
 </div>
 
-<div th:each="order : ${orders}" style="border:1px solid #ccc; padding:15px; margin-bottom:20px;">
+<!-- Orders list -->
+<div th:each="order : ${orders}" class="order-box">
 
     <h3>
         Order ID: <span th:text="${order.id}"></span>
@@ -30,37 +84,33 @@
         ₹<span th:text="${order.totalAmount}"></span>
     </p>
 
-    <table border="1" cellpadding="8">
+    <p>
+        Status:
+        <span th:text="${order.status}"
+              th:classappend="
+                ${order.status == 'PLACED'} ? 'badge badge-placed' :
+                (${order.status == 'SHIPPED'} ? 'badge badge-shipped' :
+                (${order.status == 'DELIVERED'} ? 'badge badge-delivered' : 'badge'))
+              ">
+        </span>
+    </p>
+
+    <h4>Order Items</h4>
+
+    <table>
         <tr>
             <th>Product</th>
             <th>Price</th>
-            <th>Qty</th>
-            <th>Status</th>
+            <th>Quantity</th>
         </tr>
 
         <tr th:each="item : ${order.orderItems}">
             <td th:text="${item.productName}"></td>
             <td>₹<span th:text="${item.price}"></span></td>
             <td th:text="${item.quantity}"></td>
-            <td th:text="${order.status}"></td>
         </tr>
     </table>
 
-    <table border="1" cellpadding="10">
-    <tr>
-        <th>Order ID</th>
-        <th>Date</th>
-        <th>Total Amount</th>
-        <th>Status</th>
-    </tr>
-
-    <tr th:each="order : ${orders}">
-        <td th:text="${order.id}"></td>
-        <td th:text="${order.orderDate}"></td>
-        <td th:text="${order.totalAmount}"></td>
-        <td th:text="${order.status}"></td>
-    </tr>
-</table>
 </div>
 
 </body>
